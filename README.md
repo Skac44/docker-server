@@ -43,14 +43,14 @@ which conatins various services including media management, file sharing, game h
 
 ## Media Management Stack
 ### Components:
-- Jellyfin: Media server with NVIDIA GPU acceleration
-- Sonarr: TV show management
-- Radarr: Movie management
-- Jackett: Torrent proxy 
-- Transmission: Torrent client
-- Purpose: Complete media acquisition, organization, and streaming solution
+- Jellyfin image: lscr.io/linuxserver/jellyfin:latest
+- Sonarr image (TV show management): lscr.io/linuxserver/sonarr:latest
+- Radarr image (Movie management): lscr.io/linuxserver/radarr:latest
+- Jackett image (Torrent proxy): lscr.io/linuxserver/jackett:latest
+- Transmission image (Torrent client): lscr.io/linuxserver/transmission:latest
+- Purpose: All-in-one place media collection, organization, and streaming solution
 - Features:
-  - Hardware-accelerated transcoding
+  - Hardware-accelerated transcoding with NVIDIA GPU acceleration
   - Automated download and organization
   - Multiple media libraries (movies, TV shows, cartoons)
 
