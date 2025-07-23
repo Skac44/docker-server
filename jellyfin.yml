@@ -1,0 +1,111 @@
+networks:
+  media:
+  swag:
+    external: true    
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    runtime: nvidia
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=xxx/xxx
+      - JELLYFIN_PublishedServerUrl=http://xxx.xxx.xxx.xxx #optional
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+    volumes:
+      - /mnt/mainstorage/jellyfin/config:/config
+      - /mnt/mainstorage/jellyfin/tvshows:/data/tvshows
+      - /mnt/mainstorage/jellyfin/movies:/data/movies
+      - /mnt/mainstorage/jellyfin/movies1:/data/movies1
+      - /mnt/mainstorage/jellyfin/shows1:/data/shows1
+    devices:
+      - /dev/dri:/dev/dri
+    ports:
+      - 8096:8096
+      - 8920:8920 #optional
+      - 7359:7359/udp #optional
+      - 1900:1900/udp #optional
+    restart: unless-stopped
+    networks:
+      - swag
+      - media
+    
+  sonarr: 
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=xxx/xxx
+    volumes:
+      - /mnt/mainstorage/sonarr/config:/config
+      - /mnt/mainstorage/jellyfin/tvshows:/tv #optional
+      - /mnt/mainstorage/jellyfin/downloads:/downloads #optional
+      - /mnt/mainstorage/jellyfin/cartoons:/cartoons
+    ports:
+      - 8989:8989
+    #restart: unless-stopped
+    networks:
+      - media
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=xxx/xxx
+    volumes:
+      - /mnt/mainstorage/radarr/config:/config
+      - /mnt/mainstorage/jellyfin/movies:/movies #optional
+      - /mnt/mainstorage/jellyfin/downloads:/downloads #optional
+    ports:
+      - 7878:7878
+    #restart: unless-stopped
+    networks:
+      - media
+
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=xxx/xxx
+      - AUTO_UPDATE=true #optional
+      - RUN_OPTS= #optional
+    volumes:
+      - /mnt/mainstorage/jackett/config:/config
+      - /mnt/mainstorage/jellyfin/downloads:/downloads
+    ports:
+      - 9117:9117
+    #restart: unless-stopped
+    networks:
+      - media
+
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=xxx/xxx
+      - TRANSMISSION_WEB_HOME= #optional
+      - USER= #optional
+      - PASS= #optional
+      - WHITELIST= #optional
+      - PEERPORT= #optional
+      - HOST_WHITELIST= #optional
+    volumes:
+      - /mnt/mainstorage/transmission/config:/config
+      - /mnt/mainstorage/jellyfin/downloads:/downloads #optional
+      #- /path/to/watch/folder:/watch #optional
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    #restart: unless-stopped
+    networks:
+      - media

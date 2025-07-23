@@ -1,0 +1,30 @@
+version: "2.1"
+services:
+  swag:
+    image: lscr.io/linuxserver/swag
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=xxx/xxx
+      - URL=site.com
+      - SUBDOMAINS=wildcard
+      - VALIDATION=dns
+      - CERTPROVIDER=zerossl
+      - DNSPLUGIN=cloudflare #optional
+      - EMAIL=emailname@email.com #optional
+
+    volumes:
+      - /mnt/mainstorage/swag/:/config
+    ports:
+      - 443:443
+      - 80:80 #optional
+    restart: unless-stopped
+    networks:
+      - swag
+
+networks:
+  swag:
+    external: true

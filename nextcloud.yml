@@ -1,0 +1,55 @@
+---
+networks:
+  nextcloud:
+  swag:
+    external: true
+
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=xxx/xxx
+    volumes:
+      - /mnt/mainstorage/nextcloud/config:/config
+      - /mnt/mainstorage/nextcloud/data:/data
+    ports:
+      - 5444:443
+    restart: unless-stopped
+    networks:
+      - nextcloud
+      - swag
+
+  mariadb:
+    image: lscr.io/linuxserver/mariadb:latest
+    container_name: mariadb
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=xxx/xxx
+      - MYSQL_ROOT_PASSWORD=pass
+      - MYSQL_DATABASE=database #optional
+      - MYSQL_USER=user #optional
+      - MYSQL_PASSWORD=pass #optional
+    volumes:
+      - /mnt/mainstorage/mariadb/config:/config
+    ports:
+      - 3306:3306
+    restart: unless-stopped
+    networks:
+      - nextcloud
+
+  onlyoffice:
+    image: onlyoffice/documentserver
+    container_name: onlyoffice
+    #ports:
+    #  - 5445:5445
+    restart: unless-stopped
+    environment:
+      - JWT_ENABLED=true  # true for token protection
+      - JWT_SECRET=pass
+    networks:
+      - nextcloud
+      - swag
